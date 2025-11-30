@@ -50,8 +50,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	size_t	lens2;
 	char	*s3;
 
-	lens1 = s1 ? ft_strlen(s1) : 0;
-	lens2 = s2 ? ft_strlen(s2) : 0;
+	if (s1)
+		lens1 = ft_strlen(s1);
+	if (s2)
+		lens2 = ft_strlen(s2);
 	s3 = malloc(lens1 + lens2 + 1);
 	if (!s3)
 		return (NULL);
@@ -71,7 +73,7 @@ char	*file_line(char *stash)
 	char	*line;
 	int		i;
 
-	if (!stash)
+	if (!stash || stash[0] == '\0')
 		return (NULL);
 	i = 0;
 	while (stash[i] && stash[i] != '\n')
@@ -108,7 +110,10 @@ char	*clean_stash(char *stash)
 	i++;
 	new_stash = malloc(ft_strlen(stash) - i + 1);
 	if (!new_stash)
+	{
+		free (stash);
 		return (NULL);
+	}
 	j = 0;
 	while (stash[i])
 		new_stash[j++] = stash[i++];
