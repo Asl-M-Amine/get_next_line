@@ -40,6 +40,7 @@ static char	*read_into_stash(t_list *node)
 
 char	*file_node(t_list *node, t_list **lst)
 {
+	char	*tmp;
 	char	*line;
 
 	if (!read_into_stash(node))
@@ -48,8 +49,9 @@ char	*file_node(t_list *node, t_list **lst)
 		return (NULL);
 	}
 	line = file_line(node->stash);
+	tmp = node->stash;
 	node->stash = clean_stash(node->stash);
-	if (!node->stash)
+	if (!node->stash && !ft_strchr(tmp, '\n'))
 		ft_lstdel(lst, node);
 	return (line);
 }

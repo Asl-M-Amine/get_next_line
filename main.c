@@ -1,70 +1,57 @@
-#include <fcntl.h>
 #include <stdio.h>
-#include "get_next_line.h"
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "get_next_line_bonus.h"
 
 int main(void)
 {
-    int fd1, fd2;
-    char *line1;
-    char *line2;
+    int fd1 = open("text1.txt", O_RDONLY);
+    int fd2 = open("text2.txt", O_RDONLY);
+    int fd3 = open("text3.txt", O_RDONLY);
 
-    // ------------------------- //
-    //   Open files for testing  //
-    // ------------------------- //
-    fd1 = open("text1.txt", O_RDONLY);
-    fd2 = open("text2.txt", O_RDONLY);
-    if (fd1 < 0 || fd2 < 0)
+    if (fd1 < 0 || fd2 < 0 || fd3 < 0)
     {
-        printf("Error opening files.\n");
-        return (1);
+        perror("open");
+        return 1;
     }
 
-    // ------------------------- //
-    //   TEST SINGLE FD GNL      //
-    // ------------------------- //
-    printf("---- Testing get_next_line(fd1) ----\n");
-    while ((line1 = get_next_line(fd1)) != NULL)
-    {
-        printf("FD1: %s", line1);
-        free(line1);
-    }
-    close(fd1); // Close after single FD test
+    char *line1 = NULL;
+    char *line2 = NULL;
+    char *line3 = NULL;
 
-    // ------------------------- //
-    //   TEST MULTIPLE FD BONUS  //
-    // ------------------------- //
-    // Reopen FD1 to start from beginning
-    fd1 = open("text1.txt", O_RDONLY);
-    if (fd1 < 0)
-    {
-        printf("Error reopening fd1.\n");
-        close(fd2);
-        return (1);
-    }
-
-    printf("\n---- Testing get_next_line_bonus(fd1 & fd2) ----\n");
     while (1)
     {
-        line1 = get_next_line_bonus(fd1);
-        line2 = get_next_line_bonus(fd2);
+        int all_eof = 1; // check if all files are done
 
-        if (!line1 && !line2)
-            break;
-
-        if (line1)
+        if ((line1 = get_next_line_bonus(fd1)))
         {
-            printf("FD1: %s", line1);
+            printf("FD1 : %s", line1);
             free(line1);
+            all_eof = 0;
         }
-        if (line2)
+
+        if ((line2 = get_next_line_bonus(fd2)))
         {
-            printf("FD2: %s", line2);
+            printf("FD2 : %s", line2);
             free(line2);
+            all_eof = 0;
         }
+
+        if ((line3 = get_next_line_bonus(fd3)))
+        {
+            printf("FD3 : %s", line3);
+            free(line3);
+            all_eof = 0;
+        }
+
+        if (all_eof)
+            break; // stop when all files are finished
     }
 
     close(fd1);
     close(fd2);
+    close(fd3);
+
     return 0;
 }

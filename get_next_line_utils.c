@@ -50,6 +50,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	size_t	lens2;
 	char	*s3;
 
+	lens1 = 0;
+	lens2 = 0;
 	if (s1)
 		lens1 = ft_strlen(s1);
 	if (s2)
@@ -100,9 +102,11 @@ char	*clean_stash(char *stash)
 	int		j;
 
 	i = 0;
+	if (!stash)
+		return (NULL);
 	while (stash[i] && stash[i] != '\n')
 		i++;
-	if (stash[i] != '\n')
+	if (!stash[i])
 	{
 		free (stash);
 		return (NULL);
